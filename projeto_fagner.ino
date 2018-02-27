@@ -6,12 +6,14 @@ float temperatura_atual = 0;
 int ADClido = 0;
 float temperatura_setada = 5;
 void setup(){
- Serial.begin(9600);
+ Serial.begin(115200);
  analogReference(INTERNAL); //Se estiver usando Arduino Mega, use INTERNAL1V1
 }
 void loop(){
  ADClido = analogRead(LM35);
  temperatura_atual = ADClido * 0.1075268817204301;
+ delay(100);
+ Serial.print(temperatura_atual);
  lcd.begin(16, 2);
  lcd.setCursor(0,0);
  lcd.print("Atual : ");
@@ -21,6 +23,7 @@ void loop(){
  lcd.print("Setada : ");
  lcd.print(temperatura_setada);
  lcd.print(" *C");
- Serial.print(float(temperatura_atual));
+ //Serial.print(float(temperatura_atual));
+ //Serial.print(2);
  delay(1000);
 }

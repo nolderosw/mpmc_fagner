@@ -15,22 +15,27 @@ var mySocket;
 var serialport = require("serialport"); //incluindo o modulo de comunicação serial
 var SerialPort = serialport.SerialPort; //instanciando o objeto serial port
 
-var mySerial = new serialport("/dev/cu.usbmodem1411", {
-    baudRate: 9600,
+var mySerial = new serialport("/dev/cu.usbserial-A403F0RK", {
+    baudRate: 115200,
     parser: new serialport.parsers.Readline('\n')
 
-}); //Comunicando com o arduino na porta "/dev/cu.usbmodem1411"
+}); //Comunicando com o arduino na porta "/dev/cu.usbserial-A403F0RK"
 
 mySerial.on("open", function(){
     console.log("porta aberta");
 }); //verificar se abriu a porta corretamente
 
+var data_anterior;
 mySerial.on("data", function(data){
+    var prc = (parseFloat(data)/data_anterior)*100;
     //console.log(parseFloat(data));
     //console.log(data[0].toString());
-    io.emit("dadoArduino", {
-        valor: parseFloat(data)
-    });
+    if(!(100-prc > 30) && !(prc - 100 > 30)){
+        io.emit("dadoArduino", {
+            valor: parseFloat(data),
+        });
+    }
+    data_anterior = parseFloat(data);
 }); //ocorre quando receber algum dado na serial
 
 io.on("conection", function(socket){
